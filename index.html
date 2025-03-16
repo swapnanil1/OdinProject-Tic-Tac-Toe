@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Tic Tac Toe Game</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="board"></div>
+    <div class="container">
+      <h1 class="header">Tic Tac Toe</h1>
+      <div class="game-info">
+        <div class="player-turn">
+          Current Player: <span id="current-player">X</span>
+        </div>
+        <div class="game-winner">Game Winner is <span id="winner"></span>!</div>
+        <div class="game-status" id="game-status"></div>
+      </div>
+      <div id="board"></div>
+      <div class="controls">
+        <button id="reset-button" class="button">
+          <span>New Game</span>
+        </button>
+      </div>
+    </div>
   </body>
   <script src="script.js"></script>
 </html>
