@@ -1,0 +1,42 @@
+#board {
+  font-family: sans-serif;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 500px;
+  width: 90%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #000;
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(24px, 8vw, 60px);
+  line-height: 1;
+  cursor: pointer;
+  border: 2px solid;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.cell:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 480px) {
+  #board {
+    width: 95%;
+    gap: 5px;
+  }
+
+  .cell {
+    border-width: 1px;
+  }
+}
