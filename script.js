@@ -2,11 +2,13 @@ const renderGameBoard = (function () {
   const boardElement = document.querySelector("#board");
   boardElement.innerHTML = "";
   const drawBoardUI = function () {
-    for (let cellIndex = 0; cellIndex < 3 * 3; cellIndex++) {
-      const cellElement = document.createElement("div");
-      cellElement.className = "cell";
-      cellElement.dataset.index = cellIndex;
-      boardElement.appendChild(cellElement);
+    if (boardElement.innerHTML === "") {
+      for (let cellIndex = 0; cellIndex < 3 * 3; cellIndex++) {
+        const cellElement = document.createElement("div");
+        cellElement.className = "cell";
+        cellElement.dataset.index = cellIndex;
+        boardElement.appendChild(cellElement);
+      }
     }
   };
   const createBoardArr = function () {
@@ -15,11 +17,16 @@ const renderGameBoard = (function () {
   return { drawBoardUI, createBoardArr };
 })();
 
-let isGameActive = true;
-let currentPlayerMark = "X";
-const gameBoardArray = renderGameBoard.createBoardArr();
+const runGame = function () {
+  let isGameActive = true;
+  let currentPlayerMark = "X";
+  let gameBoardArray = renderGameBoard.createBoardArr();
 
-const setupPlayerInteraction = function () {
+  document.getElementById("board").innerHTML = "";
+  renderGameBoard.drawBoardUI();
+
+  document.querySelector("#current-player").textContent = currentPlayerMark;
+
   const cells = document.querySelectorAll(".cell");
 
   cells.forEach((cell) => {
@@ -36,7 +43,6 @@ const setupPlayerInteraction = function () {
     gameBoardArray[cellIndexOnBoard] = currentPlayerMark;
 
     if (checkWinner(gameBoardArray)) {
-      // Removed size argument
       document.getElementById("winner").textContent = currentPlayerMark;
       isGameActive = false;
       return;
@@ -77,9 +83,7 @@ const checkWinner = (board) => {
 
 const newGameButton = document.getElementById("reset-button");
 newGameButton.addEventListener("click", () => {
-  location.reload();
+  document.getElementById("winner").textContent = "";
+  runGame();
 });
-
-renderGameBoard.drawBoardUI();
-setupPlayerInteraction();
-document.querySelector("#current-player").textContent = currentPlayerMark;
+runGame();
