@@ -16,13 +16,15 @@ const renderGameBoard = function (gridSize) {
 let isGameActive = true;
 
 const setupPlayerInteraction = function (currentPlayerSymbol, gameBoardArray) {
+  // Game runner, apply user choice on the ui and on the internal array , tries to find winner on every run , switches user at end , if array full then draw
   if (!isGameActive) return;
 
   const allCellElements = document.querySelectorAll(".cell");
 
   allCellElements.forEach((cellElement) => {
-    const clonedCellElement = cellElement.cloneNode(true);
-    cellElement.parentNode.replaceChild(clonedCellElement, cellElement);
+    // remove all eventlisteners if exists
+    const clonedCellElement = cellElement.cloneNode(true); // CloneNode Does not clone event listeners
+    cellElement.parentNode.replaceChild(clonedCellElement, cellElement); // cellElement is replaced by clonedCellEle
   });
 
   const freshCellElements = document.querySelectorAll(".cell");
@@ -31,40 +33,39 @@ const setupPlayerInteraction = function (currentPlayerSymbol, gameBoardArray) {
     if (cellElement.textContent === "X" || cellElement.textContent === "O")
       return;
 
-    cellElement.addEventListener(
-      "click",
-      function handleCellClick() {
-        if (cellElement.textContent !== "" || !isGameActive) return;
+    cellElement.addEventListener("click", function handleCellClick() {
+      if (cellElement.textContent !== "" || !isGameActive) return;
 
-        cellElement.textContent = currentPlayerSymbol;
+      cellElement.textContent = currentPlayerSymbol;
 
-        const cellPositionIndex = parseInt(cellElement.dataset.index);
-        gameBoardArray[cellPositionIndex] = currentPlayerSymbol;
+      const cellPositionIndex = parseInt(cellElement.dataset.index); // Setting the BoardArray(tictactoeboard) fill the spot with X | O
+      gameBoardArray[cellPositionIndex] = currentPlayerSymbol;
 
-        if (checkWinner(gameBoardArray, 3)) {
-          document.getElementById("winner").textContent = currentPlayerSymbol;
-          isGameActive = false;
-          return;
-        }
+      if (checkWinner(gameBoardArray, 3)) {
+        document.getElementById("winner").textContent = currentPlayerSymbol;
+        isGameActive = false;
+        return;
+      }
 
-        if (!gameBoardArray.includes("")) {
-          document.getElementById("winner").textContent = "None";
-          isGameActive = false;
-          return;
-        }
+      if (!gameBoardArray.includes("")) {
+        // ALL cells are filled and nobody wins
+        document.getElementById("winner").textContent = "Nobody";
+        isGameActive = false;
+        return;
+      }
 
-        const nextPlayerSymbol = currentPlayerSymbol === "X" ? "O" : "X";
-        document.querySelector(
-          "#current-player"
-        ).textContent = `${nextPlayerSymbol}`;
-        setupPlayerInteraction(nextPlayerSymbol, gameBoardArray);
-      },
-      { once: true }
-    );
+      const nextPlayerSymbol = currentPlayerSymbol === "X" ? "O" : "X";
+      // Switch Player
+      document.querySelector(
+        "#current-player"
+      ).textContent = `${nextPlayerSymbol}`;
+      setupPlayerInteraction(nextPlayerSymbol, gameBoardArray); // Call this function again with nextPlayer Choice
+    });
   });
 };
 
 const checkWinner = (ticTacToeBoard, size) => {
+  // returns true if matching pattern found (Diag,Verti,Horiz).
   const checkLine = (start, increment, count) => {
     const firstValue = ticTacToeBoard[start];
     if (!firstValue) return false;
@@ -89,16 +90,10 @@ const checkWinner = (ticTacToeBoard, size) => {
   return false;
 };
 
-const resetGame = () => {
-  isGameActive = true;
-  const newGameBoardArray = renderGameBoard(3);
-  setupPlayerInteraction("X", newGameBoardArray);
-};
-
-const initialGameBoardArray = renderGameBoard(3);
-setupPlayerInteraction("X", initialGameBoardArray);
-
 const newGame = document.getElementById("reset-button");
 newGame.addEventListener("click", () => {
   location.reload();
 });
+
+const initialGameBoardArray = renderGameBoard(3);
+setupPlayerInteraction("X", initialGameBoardArray);
