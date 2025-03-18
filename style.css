@@ -88,16 +88,8 @@ body {
   border-radius: 5px;
   aspect-ratio: 1 / 1;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease; /* Combined transitions */
   color: #ffffff;
-}
-
-.x-mark {
-  color: #ff6b6b;
-}
-
-.o-mark {
-  color: #00bcd4;
 }
 
 .cell:hover {
@@ -137,16 +129,12 @@ button span {
   color: #f8f9fa;
   border: 0.08em solid #f8f9fa;
   box-shadow: 0 0.4em 0.1em 0.019em #f8f9fa;
+  transition: transform 0.5s, box-shadow 0.5s; /* Combined transitions and removed redundant transition */
 }
 
 button span:hover {
-  transition: all 0.5s;
   transform: translate(0, 0.4em);
   box-shadow: 0 0 0 0 #f8f9fa;
-}
-
-button span:not(hover) {
-  transition: all 1s;
 }
 
 @media (max-width: 480px) {
