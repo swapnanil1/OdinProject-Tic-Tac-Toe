@@ -1,89 +1,101 @@
 const renderGameBoard = (function () {
-  const boardElement = document.querySelector("#board");
-  boardElement.innerHTML = "";
-  const drawBoardUI = function () {
-    if (boardElement.innerHTML === "") {
-      for (let cellIndex = 0; cellIndex < 3 * 3; cellIndex++) {
-        const cellElement = document.createElement("div");
-        cellElement.className = "cell";
-        cellElement.dataset.index = cellIndex;
-        boardElement.appendChild(cellElement);
+  // Module for rendering the game board UI
+  const boardUI = document.querySelector("#board");
+  boardUI.innerHTML = "";
+  const drawBoard = function () {
+    // Draws the board in the DOM
+    if (boardUI.innerHTML === "") {
+      for (let index = 0; index < 3 * 3; index++) {
+        // Creates 9 cells
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.index = index;
+        boardUI.appendChild(cell);
       }
     }
   };
-  const createBoardArr = function () {
+  const createBoardArray = function () {
+    // Creates the array representing the board state
     return Array(3 * 3).fill("");
   };
-  return { drawBoardUI, createBoardArr };
+  return { drawBoard, createBoardArray };
 })();
 
 const runGame = function () {
-  let isGameActive = true;
-  let currentPlayerMark = "X";
-  let gameBoardArray = renderGameBoard.createBoardArr();
+  // Main function to run the game
+  let gameRunning = true;
+  let mark = "X";
+  let boardData = renderGameBoard.createBoardArray();
 
   document.getElementById("board").innerHTML = "";
-  renderGameBoard.drawBoardUI();
+  renderGameBoard.drawBoard();
 
-  document.querySelector("#current-player").textContent = currentPlayerMark;
+  document.querySelector("#current-player").textContent = mark;
 
   const cells = document.querySelectorAll(".cell");
 
   cells.forEach((cell) => {
-    cell.addEventListener("click", handleCellClick);
+    cell.addEventListener("click", handleCellClick); // Add click handler to each cell
   });
 
   function handleCellClick(event) {
-    if (!isGameActive) return;
-    const cellElement = event.target;
-    if (cellElement.textContent !== "") return;
+    // Handles a cell click event
+    if (!gameRunning) return;
+    const clickedCell = event.target;
+    if (clickedCell.textContent !== "") return; // Prevent overwriting filled cell
 
-    cellElement.textContent = currentPlayerMark;
-    const cellIndexOnBoard = parseInt(cellElement.dataset.index);
-    gameBoardArray[cellIndexOnBoard] = currentPlayerMark;
+    clickedCell.textContent = mark;
+    const cellIndex = parseInt(clickedCell.dataset.index);
+    boardData[cellIndex] = mark; // Update game board data
 
-    if (checkWinner(gameBoardArray)) {
-      document.getElementById("winner").textContent = currentPlayerMark;
-      isGameActive = false;
+    if (checkWinner(boardData)) {
+      // Check for winner
+      document.getElementById("winner").textContent = mark;
+      gameRunning = false;
       return;
     }
 
-    if (!gameBoardArray.includes("")) {
+    if (!boardData.includes("")) {
+      // Check for draw
       document.getElementById("winner").textContent = "Nobody";
-      isGameActive = false;
+      gameRunning = false;
       return;
     }
 
-    currentPlayerMark = currentPlayerMark === "X" ? "O" : "X";
-    document.querySelector("#current-player").textContent = currentPlayerMark;
+    mark = mark === "X" ? "O" : "X"; // Switch player turn
+    document.querySelector("#current-player").textContent = mark;
   }
 };
 
 const checkWinner = (board) => {
+  // Checks if there is a winner on the board
   const size = 3;
   const checkLine = (start, increment, count) => {
-    const firstValue = board[start];
-    if (!firstValue) return false;
+    // Helper function to check a line (row, col, diag)
+    const first = board[start];
+    if (!first) return false;
     for (let i = 1; i < count; i++) {
-      if (board[start + increment * i] !== firstValue) return false;
+      if (board[start + increment * i] !== first) return false;
     }
     return true;
   };
 
   for (let i = 0; i < size; i++) {
-    if (checkLine(i * size, 1, size)) return true;
-    if (checkLine(i, size, size)) return true;
+    // Check rows and columns
+    if (checkLine(i * size, 1, size)) return true; // Check row
+    if (checkLine(i, size, size)) return true; // Check column
   }
 
-  if (checkLine(0, size + 1, size)) return true;
-  if (checkLine(size - 1, size - 1, size)) return true;
+  if (checkLine(0, size + 1, size)) return true; // Check diagonal top-left to bottom-right
+  if (checkLine(size - 1, size - 1, size)) return true; // Check diagonal top-right to bottom-left
 
-  return false;
+  return false; // No winner found
 };
 
-const newGameButton = document.getElementById("reset-button");
-newGameButton.addEventListener("click", () => {
+const resetButton = document.getElementById("reset-button");
+resetButton.addEventListener("click", () => {
+  // Reset button handler
   document.getElementById("winner").textContent = "";
-  runGame();
+  runGame(); // Start a new game
 });
-runGame();
+runGame(); // Start the game on page load
